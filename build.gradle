@@ -28,10 +28,42 @@ def s84Group = "io.service84.apiregistry.${s84CoreName}"
 def s84JarName = "${s84Group}.gradle.plugin"
 
 // configure all java components to be published
+// customize the pom so it complies to Maven central requirements https://central.sonatype.org/pages/requirements.html
+// https://docs.gradle.org/current/userguide/maven_plugin.html#sec:maven_pom_generation
 publishing {
   publications {
     maven(MavenPublication) {
       from(components.java)
+      pom {
+        name = s84Name
+        packaging = 'jar'
+        description = s84Description
+        groupId = s84Group
+        artifactId = s84JarName
+        version = s84Version
+        url = s84GithubBase
+
+        scm {
+          connection = 'scm:git:' + s84GithubBase + '.git'
+          developerConnection = 'scm:git:' + s84GithubBase + '.git'
+          url = s84GithubBase
+        }
+
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id = 'tyler'
+            name = 'Tyler'
+            email = 'Tyler@service84.io'
+          }
+        }
+      }
     }
   }
   repositories {
@@ -99,45 +131,6 @@ void sign(Project project) {
     }
 
     sign publishing.publications.maven
-  }
-}
-
-// customize the pom so it complies to Maven central requirements https://central.sonatype.org/pages/requirements.html
-// https://docs.gradle.org/current/userguide/maven_plugin.html#sec:maven_pom_generation
-project.plugins.withType(MavenPublishPlugin).all {
-  PublishingExtension publishing = project.extensions.getByType(PublishingExtension)
-
-  publishing.publications.withType(MavenPublication).all { mavenPublication ->
-    mavenPublication.pom {
-      name = s84Name
-      packaging = 'jar'
-      description = s84Description
-      groupId = s84Group
-      artifactId = s84JarName
-      version = s84Version
-      url = s84GithubBase
-
-      scm {
-        connection = 'scm:git:' + s84GithubBase + '.git'
-        developerConnection = 'scm:git:' + s84GithubBase + '.git'
-        url = s84GithubBase
-      }
-
-      licenses {
-        license {
-          name = 'The Apache License, Version 2.0'
-          url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-        }
-      }
-
-      developers {
-        developer {
-          id = 'tyler'
-          name = 'Tyler'
-          email = 'Tyler@service84.io'
-        }
-      }
-    }
   }
 }
 
